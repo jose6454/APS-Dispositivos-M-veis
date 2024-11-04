@@ -13,8 +13,27 @@ const App = () => {
   const [total, setTotal] = useState(0);
 
   const addToCart = (product) => {
-    const updatedCart = [...cart, product];
+    const updatedCart = [...cart, { ...product, quantity: 1 }];
     const updatedTotal = total + product.price;
+    setCart(updatedCart);
+    setTotal(updatedTotal);
+  };
+
+  const removeFromCart = (id) => {
+    const updatedCart = cart.filter(item => item.id !== id);
+    const updatedTotal = updatedCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    setCart(updatedCart);
+    setTotal(updatedTotal);
+  };
+
+  const updateQuantity = (id, quantity) => {
+    const updatedCart = cart.map(item => {
+      if (item.id === id) {
+        return { ...item, quantity: parseInt(quantity) };
+      }
+      return item;
+    });
+    const updatedTotal = updatedCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     setCart(updatedCart);
     setTotal(updatedTotal);
   };
@@ -39,9 +58,17 @@ const App = () => {
           <div key={item.id} className="cart-item">
             <span>{item.name}</span>
             <span>${item.price}</span>
+            <input 
+              type="number" 
+              value={item.quantity} 
+              min="1" 
+              onChange={(e) => updateQuantity(item.id, e.target.value)} 
+              className="quantity-input"
+            />
+            <button className="remove-from-cart" onClick={() => removeFromCart(item.id)}>Remove</button>
           </div>
         ))}
-        <div className="cart-total">Total: ${total}</div>
+        <div className="cart-total">Total: ${total.toFixed(2)}</div>
       </div>
     </div>
   );
