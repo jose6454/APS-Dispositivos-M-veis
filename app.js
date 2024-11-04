@@ -11,6 +11,7 @@ const products = [
 const App = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
 
   const addToCart = (product) => {
     const updatedCart = [...cart, { ...product, quantity: 1 }];
@@ -36,6 +37,12 @@ const App = () => {
     const updatedTotal = updatedCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     setCart(updatedCart);
     setTotal(updatedTotal);
+  };
+
+  const confirmPurchase = () => {
+    setConfirmationMessage(`Compra finalizada! Total: $${total.toFixed(2)}`);
+    setCart([]);
+    setTotal(0);
   };
 
   return (
@@ -69,6 +76,10 @@ const App = () => {
           </div>
         ))}
         <div className="cart-total">Total: ${total.toFixed(2)}</div>
+        {cart.length > 0 && (
+          <button className="confirm-purchase" onClick={confirmPurchase}>Finalizar compra</button>
+        )}
+        {confirmationMessage && <div className="confirmation-message">{confirmationMessage}</div>}
       </div>
     </div>
   );
